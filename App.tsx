@@ -45,13 +45,11 @@ const App: React.FC = () => {
     return saved ? JSON.parse(saved) : INITIAL_MOVIES;
   });
   
-  // TV Navigation State
   const [focusSection, setFocusSection] = useState<FocusSection>('shelves');
   const [focusedIndex, setFocusedIndex] = useState(0);
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [isModalOpen, setIsModalOpen] = useState(false);
   
-  // Refs for auto-scrolling
   const mainRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -67,46 +65,46 @@ const App: React.FC = () => {
 
   const currentMovie = movies[focusedIndex % movies.length] || movies[0];
 
-  // Global Keydown Handler for Remote Control Support
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (isModalOpen) return; // Let modal handle its own keys
+      // Remote Back Button is usually Escape or Backspace
+      if (e.key === 'Escape' || e.key === 'Backspace') {
+        if (isModalOpen) {
+          setIsModalOpen(false);
+          setFocusSection('sidebar');
+          e.preventDefault();
+        } else if (focusSection !== 'sidebar') {
+          setFocusSection('sidebar');
+          e.preventDefault();
+        }
+        return;
+      }
+
+      if (isModalOpen) return;
 
       switch (e.key) {
         case 'ArrowRight':
-          if (focusSection === 'sidebar') {
-            setFocusSection('hero');
-          } else if (focusSection === 'hero') {
-            // Already in content
-          } else if (focusSection === 'shelves') {
-            setFocusedIndex(prev => Math.min(prev + 1, movies.length - 1));
-          }
+          if (focusSection === 'sidebar') setFocusSection('hero');
+          else if (focusSection === 'shelves') setFocusedIndex(prev => Math.min(prev + 1, movies.length - 1));
           break;
         case 'ArrowLeft':
-          if (focusSection === 'shelves' && focusedIndex === 0) {
-            setFocusSection('sidebar');
-          } else if (focusSection === 'shelves') {
-            setFocusedIndex(prev => Math.max(prev - 1, 0));
-          } else if (focusSection === 'hero') {
-            setFocusSection('sidebar');
-          }
+          if (focusSection === 'shelves' && focusedIndex === 0) setFocusSection('sidebar');
+          else if (focusSection === 'shelves') setFocusedIndex(prev => Math.max(prev - 1, 0));
+          else if (focusSection === 'hero') setFocusSection('sidebar');
           break;
         case 'ArrowDown':
           if (focusSection === 'hero') {
             setFocusSection('shelves');
             setFocusedIndex(0);
-          } else if (focusSection === 'sidebar') {
-            // Sidebar vertical navigation (placeholder for cat selection)
           }
           break;
         case 'ArrowUp':
-          if (focusSection === 'shelves') {
-            setFocusSection('hero');
-          }
+          if (focusSection === 'shelves') setFocusSection('hero');
           break;
         case 'Enter':
           if (focusSection === 'hero' || focusSection === 'shelves') {
-            window.open(currentMovie.url, '_blank');
+            // Launching YouTube
+            window.location.href = currentMovie.url;
           }
           break;
       }
@@ -128,34 +126,20 @@ const App: React.FC = () => {
         isFocused={focusSection === 'sidebar'}
       />
       
-      <main ref={mainRef} className="flex-1 overflow-y-auto overflow-x-hidden relative scroll-smooth">
+      <main ref={mainRef} className="flex-1 overflow-y-auto overflow-x-hidden relative scroll-smooth no-scrollbar">
         <Hero 
           movie={currentMovie} 
           isFocused={focusSection === 'hero'}
-          onPlay={() => window.open(currentMovie.url, '_blank')} 
+          onPlay={() => window.location.href = currentMovie.url} 
         />
         
         <div className="px-12 -mt-24 pb-20 relative z-20 space-y-12">
           <Shelf 
-            title="Continue Watching"
+            title="My Collection"
             movies={movies}
             focusedMovieId={focusSection === 'shelves' ? movies[focusedIndex]?.id : null}
-            onMovieClick={(movie) => window.open(movie.url, '_blank')}
+            onMovieClick={(movie) => window.location.href = movie.url}
           />
-          
-          {CATEGORIES.map(cat => {
-            const catMovies = movies.filter(m => m.category === cat);
-            if (catMovies.length === 0) return null;
-            return (
-              <Shelf 
-                key={cat}
-                title={cat}
-                movies={catMovies}
-                focusedMovieId={null} // Simplified for demo
-                onMovieClick={(movie) => window.open(movie.url, '_blank')}
-              />
-            );
-          })}
         </div>
       </main>
 
