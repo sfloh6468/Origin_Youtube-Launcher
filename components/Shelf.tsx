@@ -8,9 +8,11 @@ interface ShelfProps {
   movies: Movie[];
   focusedMovieId: string | null;
   onMovieClick: (movie: Movie) => void;
+  onDelete: (id: string) => void;
+  onEdit: (movie: Movie) => void;
 }
 
-const Shelf: React.FC<ShelfProps> = ({ title, movies, focusedMovieId, onMovieClick }) => {
+const Shelf: React.FC<ShelfProps> = ({ title, movies, focusedMovieId, onMovieClick, onDelete, onEdit }) => {
   return (
     <div className="space-y-6">
       <h3 className="text-2xl md:text-3xl font-black px-4 md:px-0 text-zinc-100 tracking-tight flex items-center gap-3">
@@ -24,6 +26,8 @@ const Shelf: React.FC<ShelfProps> = ({ title, movies, focusedMovieId, onMovieCli
             movie={movie} 
             isFocused={focusedMovieId === movie.id}
             onClick={() => onMovieClick(movie)}
+            onDelete={() => onDelete(movie.id)}
+            onEdit={() => onEdit(movie)}
           />
         ))}
       </div>

@@ -10,16 +10,16 @@ export interface Movie {
   year?: string;
 }
 
-export type Category = 'Action' | 'Comedy' | 'Drama' | 'Sci-Fi' | 'Horror' | 'Documentary' | 'Animation';
-
-export const CATEGORIES: Category[] = [
+export const DEFAULT_CATEGORIES = [
   'Action',
   'Comedy',
   'Drama',
   'Sci-Fi',
   'Horror',
   'Documentary',
-  'Animation'
-];
+  'Animation',
+  'Sports',
+  'News'
+] as const;
 
-export type FocusSection = 'sidebar' | 'hero' | 'shelves' | 'modal';
+export type FocusSection = 'sidebar' | 'hero' | 'shelves' | 'modal' | 'player';
