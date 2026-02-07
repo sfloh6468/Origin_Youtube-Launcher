@@ -1,0 +1,8 @@
+{
+  "name": "CineStream TV",
+  "description": "A Google TV-inspired dashboard for managing and launching your favorite YouTube movie collections with AI-powered metadata generation.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
